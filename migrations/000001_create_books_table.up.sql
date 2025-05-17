@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS books (
+		index SERIAL PRIMARY KEY,
+		book VARCHAR(50) NOT NULL,
+		author VARCHAR(255) NOT NULL,
+		block BOOLEAN,
+		take_count INT DEFAULT 0
+);
