@@ -13,12 +13,20 @@ func NewRouter(auth *controllers.AuthController, user *controllers.UserControlle
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.Logger)
 
+		// Аутентификация
+		r.Post("/auth/login", auth.Login())
+		r.Post("/auth/register", auth.Register())
+	})
+
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.Logger)
+
 		// Пользователи
-		r.Post("/api/users", user.CreateUser)
-		r.Get("/api/users/{id}", user.GetUser)
-		r.Put("/api/users/{id}", user.UpdateUser)
-		r.Delete("/api/users/{id}", user.DeleteUser)
-		r.Get("/api/users", user.ListUsers)
+		r.Post("/users", user.CreateUser())
+		r.Get("/users/{id}", user.GetUser())
+		r.Put("/users", user.UpdateUser())
+		r.Delete("/users/{id}", user.DeleteUser())
+		r.Get("/users", user.ListUsers())
 
 		// Книги
 		r.Post("/api/book/take/{index}", book.TakeBook())
