@@ -10,17 +10,14 @@ import (
 // controllers/auth_controller.go
 func (ac *AuthController) Login() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var credentials struct {
-			Username string `json:"username"`
-			Password string `json:"password"`
-		}
+		var userAuth entities.UserAuth
 
-		if err := json.NewDecoder(r.Body).Decode(&credentials); err != nil {
+		if err := json.NewDecoder(r.Body).Decode(&userAuth); err != nil {
 			http.Error(w, "invalid request body", http.StatusBadRequest)
 			return
 		}
 
-		user, err := ac.facade.Login(credentials.Username, credentials.Password)
+		user, err := ac.facade.Login(userAuth.Username, userAuth.Password)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return

@@ -14,8 +14,8 @@ func NewRouter(auth *controllers.AuthController, user *controllers.UserControlle
 		r.Use(middleware.Logger)
 
 		// Аутентификация
-		r.Post("/auth/login", auth.Login())
-		r.Post("/auth/register", auth.Register())
+		r.Post("/api/login", auth.Login())
+		r.Post("/api/register", auth.Register())
 	})
 
 	r.Group(func(r chi.Router) {
