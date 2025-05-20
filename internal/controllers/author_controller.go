@@ -5,9 +5,10 @@ import (
 	"net/http"
 
 	"studentgit.kata.academy/Zhodaran/go-kata/internal/entities"
+	"studentgit.kata.academy/Zhodaran/go-kata/internal/facades"
 )
 
-func (c *AuthorController) AddAuthor() http.HandlerFunc {
+func AddAuthor(facade *facades.LibraryFacade) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var author entities.Author
 		if err := json.NewDecoder(r.Body).Decode(&author); err != nil {
@@ -15,7 +16,7 @@ func (c *AuthorController) AddAuthor() http.HandlerFunc {
 			return
 		}
 
-		if err := c.facade.AddAuthor(author); err != nil {
+		if err := facade.AddAuthor(author); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -25,9 +26,9 @@ func (c *AuthorController) AddAuthor() http.HandlerFunc {
 	}
 }
 
-func (c *AuthorController) ListAuthors() http.HandlerFunc {
+func ListAuthors(facade *facades.LibraryFacade) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		authors, err := c.facade.ListAuthors()
+		authors, err := facade.ListAuthors()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

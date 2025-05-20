@@ -6,7 +6,6 @@ import (
 	"github.com/go-chi/chi"
 	"go.uber.org/zap"
 
-	"studentgit.kata.academy/Zhodaran/go-kata/internal/controllers"
 	"studentgit.kata.academy/Zhodaran/go-kata/internal/facades"
 	"studentgit.kata.academy/Zhodaran/go-kata/internal/infrastructure/postgres"
 	"studentgit.kata.academy/Zhodaran/go-kata/internal/transport/http"
@@ -46,13 +45,9 @@ func BuildContainer(logger *zap.Logger) (*Container, error) {
 	library := facades.NewLibraryFacade(authRepo, bookRepo, authorRepo, userRepo)
 
 	// Инициализация контроллеров
-	authController := controllers.NewAuthController(library)
-	userController := controllers.NewUserController(library)
-	bookController := controllers.NewBookController(library)
-	authorController := controllers.NewAuthorController(library)
 
 	// Создание роутера
-	r := http.NewRouter(authController, userController, bookController, authorController)
+	r := http.NewRouter(library)
 
 	return &Container{Router: r}, nil
 }

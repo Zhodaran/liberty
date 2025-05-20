@@ -7,12 +7,13 @@ import (
 
 	"github.com/go-chi/chi"
 	"studentgit.kata.academy/Zhodaran/go-kata/internal/entities"
+	"studentgit.kata.academy/Zhodaran/go-kata/internal/facades"
 	"studentgit.kata.academy/Zhodaran/go-kata/internal/infrastructure/postgres"
 )
 
-func (c *BookController) GetAllBooksHandler() http.HandlerFunc {
+func GetAllBooksHandler(facade *facades.LibraryFacade) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		books, err := c.facade.GetAllBooks()
+		books, err := facade.GetAllBooks()
 		if err != nil {
 			http.Error(w, "Failed", http.StatusInternalServerError)
 			return
@@ -21,7 +22,7 @@ func (c *BookController) GetAllBooksHandler() http.HandlerFunc {
 	}
 }
 
-func (c *BookController) UpdateBook() http.HandlerFunc {
+func UpdateBook(facade *facades.LibraryFacade) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Получаем индекс книги из URL-параметров
 		indexStr := chi.URLParam(r, "index")
@@ -39,7 +40,7 @@ func (c *BookController) UpdateBook() http.HandlerFunc {
 		}
 
 		// Вызов метода обновления книги в репозитории
-		if err := c.facade.UpdateBook(index, updatedBook); err != nil {
+		if err := facade.UpdateBook(index, updatedBook); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -50,7 +51,7 @@ func (c *BookController) UpdateBook() http.HandlerFunc {
 	}
 }
 
-func (c *BookController) AddBook() http.HandlerFunc {
+func AddBook(facade *facades.LibraryFacade) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var addaderBook postgres.AddaderBookRequest
 		if err := json.NewDecoder(r.Body).Decode(&addaderBook); err != nil {
@@ -59,7 +60,7 @@ func (c *BookController) AddBook() http.HandlerFunc {
 		}
 
 		// Вызов метода добавления книги в фасаде
-		if err := c.facade.AddBook(addaderBook); err != nil {
+		if err := facade.AddBook(addaderBook); err != nil {
 			if err.Error() == "book already exists" {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
@@ -73,7 +74,7 @@ func (c *BookController) AddBook() http.HandlerFunc {
 	}
 }
 
-func (ctrl *BookController) TakeBook() http.HandlerFunc {
+func TakeBook(facade *facades.LibraryFacade) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		indexStr := chi.URLParam(r, "index")
 		index, err := strconv.Atoi(indexStr)
@@ -93,7 +94,7 @@ func (ctrl *BookController) TakeBook() http.HandlerFunc {
 			return
 		}
 
-		book, err := ctrl.facade.TakeBook(index)
+		book, err := facade.TakeBook(index)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -106,7 +107,7 @@ func (ctrl *BookController) TakeBook() http.HandlerFunc {
 	}
 }
 
-func (ctrl *BookController) ReturnBook() http.HandlerFunc {
+func ReturnBook(facade *facades.LibraryFacade) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		indexStr := chi.URLParam(r, "index")
 		index, err := strconv.Atoi(indexStr)
@@ -126,7 +127,7 @@ func (ctrl *BookController) ReturnBook() http.HandlerFunc {
 			return
 		}
 
-		if err := ctrl.facade.ReturnBook(index); err != nil {
+		if err := facade.ReturnBook(index); err != nil {
 			if err.Error() == "book not found or already returned" {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {

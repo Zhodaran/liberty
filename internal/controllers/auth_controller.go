@@ -5,10 +5,11 @@ import (
 	"net/http"
 
 	"studentgit.kata.academy/Zhodaran/go-kata/internal/entities"
+	"studentgit.kata.academy/Zhodaran/go-kata/internal/facades"
 )
 
 // controllers/auth_controller.go
-func (ac *AuthController) Login() http.HandlerFunc {
+func Login(facade *facades.LibraryFacade) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var userAuth entities.UserAuth
 
@@ -17,7 +18,7 @@ func (ac *AuthController) Login() http.HandlerFunc {
 			return
 		}
 
-		user, err := ac.facade.Login(userAuth.Username, userAuth.Password)
+		user, err := facade.Login(userAuth.Username, userAuth.Password)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
@@ -32,7 +33,7 @@ func (ac *AuthController) Login() http.HandlerFunc {
 	}
 }
 
-func (ac *AuthController) Register() http.HandlerFunc {
+func Register(facade *facades.LibraryFacade) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var userAuth entities.UserAuth
 		if err := json.NewDecoder(r.Body).Decode(&userAuth); err != nil {
@@ -40,7 +41,7 @@ func (ac *AuthController) Register() http.HandlerFunc {
 			return
 		}
 
-		if err := ac.facade.Register(userAuth); err != nil {
+		if err := facade.Register(userAuth); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
